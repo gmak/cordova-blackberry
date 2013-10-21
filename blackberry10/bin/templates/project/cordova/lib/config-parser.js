@@ -381,6 +381,26 @@ function processPermissionsData(data, widgetConfig) {
     }
 }
 
+function processConfigFileData(data, widgetConfig) {
+    widgetConfig.injections= [];
+
+    console.log(JSON.stringify(data["config-file"]));
+    if (data["config-file"]) {
+        var configFiles = data["config-file"];
+
+        if (!configFiles instanceof Array) {
+            configFiles = [configFiles];
+        }
+
+        configFiles.forEach(function (configFile) {
+            widgetConfig.configFiles
+        });
+    } else {
+        widgetConfig.permissions = [];
+    }
+
+}
+
 function processInvokeTargetsData(data, widgetConfig) {
 
     if (data["rim:invoke-target"]) {
@@ -616,6 +636,7 @@ function processResult(data, session) {
     processSplashScreenData(data, widgetConfig);
     processNameAndDescription(data, widgetConfig);
     processCordovaPreferences(data, widgetConfig);
+    processConfigFileData(data, widgetConfig);
 
     widgetConfig.configXML = "config.xml";
 

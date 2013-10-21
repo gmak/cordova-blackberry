@@ -53,4 +53,7 @@
     <rim:permit>access_shared</rim:permit>
   </rim:permissions>
 
+  <config-file target="bar-descriptor.xml" parent="/qnx">
+      <category>car</category>
+  </config-file>
 </widget>
