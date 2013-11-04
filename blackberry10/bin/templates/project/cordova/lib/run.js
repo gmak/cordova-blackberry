@@ -22,7 +22,7 @@ var path = require("path"),
     options = require('commander'),
     runUtils = require("./run-utils"),
     async = require("async"),
-    ERROR_CODE = 2;
+    ERROR_VALUE = 2;
 
 function install(deployTarget, done) {
     var buildCmd = utils.isWindows() ? "build" : "./build",
@@ -79,7 +79,7 @@ async.waterfall(
             if (typeof err === "string") {
                 console.error(os.EOL + err);
             }
-            process.exit(ERROR_CODE);
+            process.exit(ERROR_VALUE);
         } else {
             process.exit(0);
         }

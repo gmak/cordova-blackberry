@@ -32,6 +32,7 @@ var path = require("path"),
     childProcess = require("child_process"),
     pkgrUtils = require("./packager-utils"),
     session = require("./session"),
+    ERROR_VALUE = 2,
     commandStr;
 
 function copyArgIfExists(arg) {
@@ -58,7 +59,7 @@ try {
     if (command.debug && command.release) {
         console.error("Invalid build command: cannot specify both debug and release parameters.");
         console.log(command.helpInformation());
-        process.exit(2);
+        process.exit(ERROR_VALUE);
     }
 
     async.series(
@@ -117,11 +118,11 @@ try {
             if (err) {
                 if (typeof err === "string") {
                     console.error(os.EOL + err);
-                    process.exit(2);
+                    process.exit(ERROR_VALUE);
                 } else if (typeof err === "number") {
                     process.exit(err);
                 } else {
-                    process.exit(2);
+                    process.exit(ERROR_VALUE);
                 }
             } else {
                 process.exit(0);
@@ -130,6 +131,6 @@ try {
     );
 } catch (e) {
     console.error(os.EOL + e);
-    process.exit(2);
+    process.exit(ERROR_VALUE);
 }
 
