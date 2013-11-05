@@ -78,6 +78,11 @@ async.waterfall(
         if (err) {
             if (typeof err === "string") {
                 console.error(os.EOL + err);
+            } else if (typeof err === "number") {
+                console.error(os.EOL + "Error #"+err);
+                process.exit(err);
+            } else {
+                console.error("An error has occurred");
             }
             process.exit(ERROR_VALUE);
         } else {
