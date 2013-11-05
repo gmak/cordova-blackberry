@@ -20,9 +20,7 @@ var path = require("path"),
     utils = require("./utils"),
     options = require('commander'),
     runUtils = require("./run-utils"),
-    logger = require("./logger"),
-    async = require("async"),
-    ERROR_VALUE = 2;
+    logger = require("./logger");
 
 options
     .usage('[--target=id]')
@@ -48,23 +46,11 @@ process.argv.forEach(function (argument, index, args) {
 options.parse(process.argv);
 
 options.device = true;
-async.waterfall(
+utils.waterfall(
     [
         runUtils.getValidatedTarget.bind(this, options),
         runUtils.checkBuild,
         runUtils.uninstall.bind(this, options),
         runUtils.deployToTarget.bind(this, options)
-    ],
-    function (err) {
-        if (err) {
-            if (typeof err === "string") {
-                logger.error(err);
-                process.exit(ERROR_VALUE);
-            } else if (typeof err === "number") {
-                process.exit(err);
-            }
-        } else {
-            process.exit(0);
-        }
-    }
+    ]
 );

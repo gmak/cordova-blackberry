@@ -21,8 +21,7 @@ var path = require("path"),
     utils = require("./utils"),
     options = require('commander'),
     runUtils = require("./run-utils"),
-    async = require("async"),
-    ERROR_VALUE = 2;
+    async = require("async");
 
 function install(deployTarget, done) {
     var buildCmd = utils.isWindows() ? "build" : "./build",
@@ -69,24 +68,9 @@ process.argv.forEach(function (argument, index, args) {
 
 options.parse(process.argv);
 
-async.waterfall(
+utils.waterfall(
     [
         runUtils.getValidatedTarget.bind(this, options),
         install
-    ],
-    function (err) {
-        if (err) {
-            if (typeof err === "string") {
-                console.error(os.EOL + err);
-            } else if (typeof err === "number") {
-                console.error(os.EOL + "Error #"+err);
-                process.exit(err);
-            } else {
-                console.error("An error has occurred");
-            }
-            process.exit(ERROR_VALUE);
-        } else {
-            process.exit(0);
-        }
-    }
+    ]
 );

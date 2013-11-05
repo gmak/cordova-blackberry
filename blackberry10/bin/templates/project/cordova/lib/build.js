@@ -62,7 +62,7 @@ try {
         process.exit(ERROR_VALUE);
     }
 
-    async.series(
+    utils.series(
         [
             function clean (done) {
                 var cmd = utils.isWindows() ? "clean" : "./clean",
@@ -113,21 +113,7 @@ try {
 
                 require("./packager").start(done);
             }
-        ],
-        function (err, results) {
-            if (err) {
-                if (typeof err === "string") {
-                    console.error(os.EOL + err);
-                    process.exit(ERROR_VALUE);
-                } else if (typeof err === "number") {
-                    process.exit(err);
-                } else {
-                    process.exit(ERROR_VALUE);
-                }
-            } else {
-                process.exit(0);
-            }
-        }
+        ]
     );
 } catch (e) {
     console.error(os.EOL + e);
