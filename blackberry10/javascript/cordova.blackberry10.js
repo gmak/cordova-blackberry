@@ -825,6 +825,47 @@ function RemoteFunctionCall(functionUri) {
         return response;
     };
 
+    this.makeAsyncCall = function () {
+        var requestUri = composeUri(),
+            request = new XMLHttpRequest(),
+            response;
+
+        request.open("POST", requestUri, true /* async */);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.timeout = 1000; // Timeout in 1000ms
+
+        request.onload = function (e) {
+            response = JSON.parse(decodeURIComponent(request.responseText) || "null");
+            if (request.status === 200) {
+                didSucceed = response.code === cordova.callbackStatus.OK || response.code === cordova.callbackStatus.NO_RESULT;
+                cordova.callbackFromNative(
+                        response.callbackId,
+                        didSucceed,
+                        response.code,
+                        [ didSucceed ? response.data : response.msg ],
+                        !!response.keepCallback
+                        );
+
+            } else {
+                fail(response.msg, response);
+                delete cordova.callbacks[response.callbackId];
+            }
+        };
+
+        request.ontimeout = function () {
+            response = JSON.parse(decodeURIComponent(request.responseText) || "null");
+            fail(response.msg, response);
+            delete cordova.callbacks[response.callbackId];
+        };
+
+        request.onerror = function (e) {
+            response = JSON.parse(decodeURIComponent(request.responseText) || "null");
+            fail(response.msg, response);
+            delete cordova.callbacks[responsecallbackId];
+        };
+
+        request.send(JSON.stringify(params));
+    }
 }
 
 module.exports = function (success, fail, service, action, args) {
@@ -834,7 +875,8 @@ module.exports = function (success, fail, service, action, args) {
     proxy,
     response,
     name,
-    didSucceed;
+    didSucceed,
+    async = true;
 
     cordova.callbacks[callbackId] = {
         success: success,
@@ -856,7 +898,12 @@ module.exports = function (success, fail, service, action, args) {
                 request.addParam(name, args[name]);
             }
         }
-        
+
+        if (async) {
+            request.makeAsyncCall();
+            return;
+        }
+
         response = request.makeSyncCall();
 
         if (response.code < 0) {
